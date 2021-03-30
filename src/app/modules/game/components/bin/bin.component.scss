@@ -1,0 +1,56 @@
+@import 'variables';
+
+.bin {
+  position: relative;
+  width: 100px;
+  height: 120px;
+  border-radius: 6px;
+
+  &.red-bin {
+    background-color: $bombzilla-red;
+
+    .bin-handle {
+      background-color: darken($bombzilla-red, 15);
+    }
+  }
+
+  &.blue-bin {
+    background-color: $bombzilla-blue;
+
+    .bin-handle {
+      background-color: darken($bombzilla-blue, 15);
+    }
+  }
+
+  &.green-bin {
+    background-color: $bombzilla-green;
+
+    .bin-handle {
+      background-color: darken($bombzilla-green, 15);
+    }
+  }
+
+  .bin-cover,
+  .bin-handle {
+    position: absolute;
+    border: unset;
+  }
+
+  .bin-cover {
+    width: 100%;
+    left: 0;
+    top: -20px;
+    height: 7px;
+    border-radius: 10px;
+    background-color: inherit;
+  }
+
+  .bin-handle {
+    width: 30px;
+    left: 0;
+    right: 0;
+    top: -25px;
+    height: 5px;
+    border-radius: 10px;
+  }
+}

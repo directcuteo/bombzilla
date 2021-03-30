@@ -1,0 +1,13 @@
+<div class="game-container">
+  <div fxFlexFill
+       fxLayout="column"
+       fxLayoutAlign="space-between stretch"
+       class="game-content">
+    <div>bombs here</div>
+    <div fxLayout="row"
+         fxLayoutAlign="space-between center">
+      <app-bin *ngFor="let bin of bins"
+               [bin]="bin"></app-bin>
+    </div>
+  </div>
+</div>
