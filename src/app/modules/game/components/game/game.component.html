@@ -1,13 +1,36 @@
 <div class="game-container">
+  <div fxLayoutAlign="space-between center" class="info">
+    <div *ngIf="game$ | async as game">
+      Score: {{ game.score }}
+    </div>
+    <div>Remaining: {{ gameRemainingTime$ | async }}</div>
+  </div>
   <div fxFlexFill
        fxLayout="column"
        fxLayoutAlign="space-between stretch"
        class="game-content">
-    <div>bombs here</div>
-    <div fxLayout="row"
-         fxLayoutAlign="space-between center">
-      <app-bin *ngFor="let bin of bins"
-               [bin]="bin"></app-bin>
+    <div fxFlex="grow">
+      <div *ngFor="let bomb of bombs$ | async"
+           appDraggable
+           [initialPosition]="{ x: bomb.xPosition, y: bomb.yPosition }"
+           (bombDrop)="onBombDrop(bomb)"
+           class="draggable-bomb">
+        <app-bomb [bomb]="bomb"></app-bomb>
+      </div>
+    </div>
+    <div fxLayout="column"
+         fxLayoutGap="40px">
+      <div fxLayout="row"
+           fxLayoutAlign="space-around center">
+        <app-bin *ngFor="let bin of bins$ | async"
+                 [bin]="bin"
+                 (mouseenter)="onMouseEnterBin(bin)"
+                 (mouseleave)="clearActiveBin()"></app-bin>
+      </div>
+      <div fxLayoutAlign="end"
+           class="info">
+        Change in: {{ nextBinMix$ | async }}
+      </div>
     </div>
   </div>
 </div>

@@ -6,18 +6,22 @@ import { GameComponent } from '@game/components/game/game.component';
 import { BinComponent } from './components/bin/bin.component';
 import { BombComponent } from './components/bomb/bomb.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { DraggableDirective } from './directives/draggable.directive';
 
 
 @NgModule({
   declarations: [
     GameComponent,
     BinComponent,
-    BombComponent
+    BombComponent,
+    DraggableDirective,
   ],
   imports: [
     CommonModule,
     GameRoutingModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    DragDropModule,
   ]
 })
 export class GameModule {}

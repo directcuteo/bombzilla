@@ -1,9 +1,24 @@
 .game-container {
   max-width: 1000px;
-  height: 100%;
+  height: calc(100% - 40px);
   margin: 0 auto;
+  padding-top: 20px;
 
   .game-content {
-    padding: 100px 0;
+    padding: 60px 0;
+    position: relative;
+
+    .draggable-bomb {
+      display: inline-block;
+      position: absolute;
+
+      &.cdk-drag-placeholder {
+        display: none;
+      }
+    }
+  }
+
+  .info {
+    font-size: 30px;
   }
 }

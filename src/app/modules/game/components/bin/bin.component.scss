@@ -1,39 +1,49 @@
 @import 'variables';
 
 .bin {
-  position: relative;
   width: 100px;
   height: 120px;
-  border-radius: 6px;
+  padding-top: 10px;
+  transition: transform 0.2s ease-in-out;
 
-  &.red-bin {
-    background-color: $bombzilla-red;
+  .bin-container {
+    border-radius: 6px;
+    position: relative;
+    background-color: black;
+    width: 100%;
+    height: 100%;
 
-    .bin-handle {
-      background-color: darken($bombzilla-red, 15);
+    &.red-bin {
+      background-color: $bombzilla-red;
+
+      .bin-handle {
+        background-color: darken($bombzilla-red, 15);
+      }
     }
-  }
 
-  &.blue-bin {
-    background-color: $bombzilla-blue;
+    &.blue-bin {
+      background-color: $bombzilla-blue;
 
-    .bin-handle {
-      background-color: darken($bombzilla-blue, 15);
+      .bin-handle {
+        background-color: darken($bombzilla-blue, 15);
+      }
     }
-  }
 
-  &.green-bin {
-    background-color: $bombzilla-green;
+    &.green-bin {
+      background-color: $bombzilla-green;
 
-    .bin-handle {
-      background-color: darken($bombzilla-green, 15);
+      .bin-handle {
+        background-color: darken($bombzilla-green, 15);
+      }
     }
   }
 
   .bin-cover,
   .bin-handle {
+    pointer-events: none;
     position: absolute;
     border: unset;
+    transition: transform 0.2s ease-in-out;
   }
 
   .bin-cover {
@@ -52,5 +62,17 @@
     top: -25px;
     height: 5px;
     border-radius: 10px;
+  }
+
+  &:hover {
+    transform: scale(1.35);
+
+    .bin-cover {
+      transform: translate(50px, -54px) rotate(84deg);
+    }
+
+    .bin-handle {
+      transform: translate(55px, -50px) rotate(84deg)
+    }
   }
 }

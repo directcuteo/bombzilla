@@ -1,1 +1,8 @@
-<p>bomb works!</p>
+<div class="bomb"
+     [ngClass]="bomb.color + '-bomb'"
+     fxLayoutAlign="end"
+     fxLayout="row">
+  <div class="lifetime"
+       fxLayoutAlign="center center">{{ bombLifetime$ | async }}
+  </div>
+</div>
