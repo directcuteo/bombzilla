@@ -1,18 +1,21 @@
 <div class="game-container">
+
   <div fxLayoutAlign="space-between center" class="info">
     <div *ngIf="game$ | async as game">
       Score: {{ game.score }}
     </div>
     <div>Remaining: {{ gameRemainingTime$ | async }}</div>
   </div>
+
   <div fxFlexFill
        fxLayout="column"
        fxLayoutAlign="space-between stretch"
        class="game-content">
-    <div fxFlex="grow">
+    <div fxFlex="grow" #bombZone>
       <div *ngFor="let bomb of bombs$ | async"
            appDraggable
            [initialPosition]="{ x: bomb.xPosition, y: bomb.yPosition }"
+           (bombDrag)="onBombDrag(bomb)"
            (bombDrop)="onBombDrop(bomb)"
            class="draggable-bomb">
         <app-bomb [bomb]="bomb"></app-bomb>
@@ -24,6 +27,7 @@
            fxLayoutAlign="space-around center">
         <app-bin *ngFor="let bin of bins$ | async"
                  [bin]="bin"
+                 [class.same-bomb-hovering]="activeDraggingBomb?.color === bin.color"
                  (mouseenter)="onMouseEnterBin(bin)"
                  (mouseleave)="clearActiveBin()"></app-bin>
       </div>
@@ -33,4 +37,5 @@
       </div>
     </div>
   </div>
+
 </div>

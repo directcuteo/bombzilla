@@ -11,6 +11,7 @@ export class DraggableDirective implements OnInit {
 
   @Input() initialPosition: { x: number, y: number } = { x: 0, y: 0 };
 
+  @Output() bombDrag = new EventEmitter<void>();
   @Output() bombDrop = new EventEmitter<void>();
 
   private element: HTMLElement;
@@ -41,6 +42,7 @@ export class DraggableDirective implements OnInit {
       initialX = event.clientX - currentX;
       initialY = event.clientY - currentY;
       this.renderer2.addClass(this.element, 'free-dragging');
+      this.bombDrag.emit();
 
       dragSub = drag$.subscribe((event: MouseEvent) => {
         event.preventDefault();

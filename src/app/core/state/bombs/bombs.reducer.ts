@@ -92,9 +92,14 @@ export function bombsReducers(state: BombsState = initialState, action: any): Bo
       return {
         bombs: deleteBomb(state.bombs, action.payload)
       };
+    case BombsActionsTypes.CreateBomb:
+      return {
+        bombs: createBomb(state.bombs, action.payload)
+      };
     default:
       return state;
   }
 }
 
 const deleteBomb = (bombs: Bomb[], bombId: number) => bombs.filter(bomb => bomb.id !== bombId);
+const createBomb = (bombs: Bomb[], newBomb: Bomb) => [...bombs, newBomb];

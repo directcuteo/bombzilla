@@ -9,12 +9,11 @@ import { metaReducers, reducers } from './core/state';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { WelcomePageComponent } from './welcome-page/welcome-page.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   declarations: [
     AppComponent,
-    WelcomePageComponent
+    WelcomePageComponent,
   ],
   imports: [
     BrowserModule,
@@ -26,9 +25,10 @@ import { MatButtonModule } from '@angular/material/button';
     }),
     StoreDevtoolsModule.instrument({ maxAge: 25 }),
     FlexLayoutModule,
-    MatButtonModule
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [
+    AppComponent,
+  ]
 })
 export class AppModule {}

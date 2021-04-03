@@ -2,7 +2,9 @@ import { Game } from '../../types/game/game.type';
 import { GameActionsTypes } from './game.actions';
 
 export const initialGame: Game = {
-  score: 0
+  score: 0,
+  bombZoneWidth: 1000,
+  bombZoneHeight: 660
 };
 
 export interface GameState {
@@ -17,15 +19,32 @@ export function gameReducers(state: GameState = initialState, action: any): Game
   switch (action.type) {
     case GameActionsTypes.IncreaseScore:
       return {
-        game: { score: state.game.score + 1 }
+        game: {
+          ...state.game,
+          score: state.game.score + 1
+        }
       };
     case GameActionsTypes.DecreaseScore:
       return {
-        game: { score: state.game.score - 1 }
+        game: {
+          ...state.game,
+          score: state.game.score - 1
+        }
       };
     case GameActionsTypes.ResetScore:
       return {
-        game: { score: 0 }
+        game: {
+          ...state.game,
+          score: 0
+        }
+      };
+    case GameActionsTypes.UpdateBombZoneBoundaries:
+      return {
+        game: {
+          ...state.game,
+          bombZoneWidth: action.payload.width,
+          bombZoneHeight: action.payload.height,
+        }
       };
     default:
       return state;

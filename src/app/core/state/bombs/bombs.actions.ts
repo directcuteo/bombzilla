@@ -1,13 +1,20 @@
 import { Action } from '@ngrx/store';
-import { Bin } from '../../types/bins/bin.type';
+import { Bomb } from '../../types/bombs/bomb.type';
 
 export enum BombsActionsTypes {
   SelectBombs = '[BOMB] Select',
-  DeleteBomb = '[BOMB] Delete'
+  DeleteBomb = '[BOMB] Delete',
+  CreateBomb = '[BOMB] Create',
 }
 
 export class SelectBombs implements Action {
   readonly type = BombsActionsTypes.SelectBombs;
+}
+
+export class CreateBomb implements Action {
+  readonly type = BombsActionsTypes.CreateBomb;
+
+  constructor(public payload: Bomb) { }
 }
 
 export class DeleteBomb implements Action {

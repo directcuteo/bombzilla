@@ -1,10 +1,25 @@
 @import 'variables';
 
+:host {
+  transition: transform 0.2s ease-in-out;
+}
+
+:host.same-bomb-hovering:hover {
+  transform: scale(1.35);
+
+  .bin-cover {
+    transform: translate(50px, -54px) rotate(84deg);
+  }
+
+  .bin-handle {
+    transform: translate(55px, -50px) rotate(84deg)
+  }
+}
+
 .bin {
   width: 100px;
   height: 120px;
   padding-top: 10px;
-  transition: transform 0.2s ease-in-out;
 
   .bin-container {
     border-radius: 6px;
@@ -62,17 +77,5 @@
     top: -25px;
     height: 5px;
     border-radius: 10px;
-  }
-
-  &:hover {
-    transform: scale(1.35);
-
-    .bin-cover {
-      transform: translate(50px, -54px) rotate(84deg);
-    }
-
-    .bin-handle {
-      transform: translate(55px, -50px) rotate(84deg)
-    }
   }
 }
