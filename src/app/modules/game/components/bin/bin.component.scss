@@ -2,6 +2,20 @@
 
 :host {
   transition: transform 0.2s ease-in-out;
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: -40px;
+    left: 0;
+    right: 0;
+    height: 20px;
+    border-radius: 100%;
+    background-color: #fff;
+    transition: background-color 0.12s;
+    filter: blur(20px);
+  }
 }
 
 :host.same-bomb-hovering:hover {
@@ -13,6 +27,10 @@
 
   .bin-handle {
     transform: translate(55px, -50px) rotate(84deg)
+  }
+
+  &::after {
+    background: #555;
   }
 }
 

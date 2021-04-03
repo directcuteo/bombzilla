@@ -9,6 +9,9 @@ import { metaReducers, reducers } from './core/state';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { WelcomePageComponent } from './welcome-page/welcome-page.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { EffectsModule } from '@ngrx/effects';
+import { GameEffects } from './core/state/game/game.effects';
+import { BombsEffects } from './core/state/bombs/bombs.effects';
 
 @NgModule({
   declarations: [
@@ -25,6 +28,10 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     }),
     StoreDevtoolsModule.instrument({ maxAge: 25 }),
     FlexLayoutModule,
+    EffectsModule.forRoot([
+      GameEffects,
+      BombsEffects,
+    ]),
   ],
   providers: [],
   bootstrap: [

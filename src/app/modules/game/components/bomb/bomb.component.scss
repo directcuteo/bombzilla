@@ -5,6 +5,22 @@
   height: 80px;
   border-radius: 50%;
   cursor: pointer;
+  position: relative;
+
+  &.red-bomb {
+    background: radial-gradient(ellipse at 36% 36%, lighten($bombzilla-red, 20) 0%, lighten($bombzilla-red, 3) 62%, darken($bombzilla-red, 15) 100%);
+    box-shadow: 1px 1px 3px 0 darken($bombzilla-red, 20);
+  }
+
+  &.blue-bomb {
+    background: radial-gradient(ellipse at 36% 36%, lighten($bombzilla-blue, 20) 0%, lighten($bombzilla-blue, 3) 62%, darken($bombzilla-blue, 15) 100%);
+    box-shadow: 1px 1px 3px 0 darken($bombzilla-blue, 20);
+  }
+
+  &.green-bomb {
+    background: radial-gradient(ellipse at 36% 36%, lighten($bombzilla-green, 20) 0%, lighten($bombzilla-green, 3) 62%, darken($bombzilla-green, 15) 100%);
+    box-shadow: 1px 1px 3px 0 darken($bombzilla-green, 20);
+  }
 
   .lifetime {
     background-color: $bombzilla-orange;
@@ -12,17 +28,5 @@
     border-radius: 50%;
     width: 30px;
     height: 30px;
-  }
-
-  &.red-bomb {
-    background-color: $bombzilla-red;
-  }
-
-  &.blue-bomb {
-    background-color: $bombzilla-blue;
-  }
-
-  &.green-bomb {
-    background-color: $bombzilla-green;
   }
 }

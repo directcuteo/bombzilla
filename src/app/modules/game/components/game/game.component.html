@@ -1,17 +1,20 @@
-<div class="game-container">
+<div class="game-container"
+     fxLayout="column">
 
-  <div fxLayoutAlign="space-between center" class="info">
+  <div fxLayoutAlign="space-between center"
+       class="info">
     <div *ngIf="game$ | async as game">
       Score: {{ game.score }}
     </div>
     <div>Remaining: {{ gameRemainingTime$ | async }}</div>
   </div>
 
-  <div fxFlexFill
+  <div fxFlex="grow"
        fxLayout="column"
        fxLayoutAlign="space-between stretch"
        class="game-content">
-    <div fxFlex="grow" #bombZone>
+    <div fxFlex="grow"
+         #bombZone>
       <div *ngFor="let bomb of bombs$ | async"
            appDraggable
            [initialPosition]="{ x: bomb.xPosition, y: bomb.yPosition }"

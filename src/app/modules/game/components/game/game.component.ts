@@ -1,15 +1,16 @@
-import { AfterViewInit, Component, ElementRef, NgZone, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Bin } from '../../../../core/types/bins/bin.type';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../../../core/state';
 import { Observable, timer } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { delay, filter, map } from 'rxjs/operators';
 import { BinsActionsTypes } from '../../../../core/state/bins/bins.actions';
 import { Bomb } from '../../../../core/types/bombs/bomb.type';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { BombsActionsTypes } from '../../../../core/state/bombs/bombs.actions';
 import { Game } from '../../../../core/types/game/game.type';
 import { GameActionsTypes } from '../../../../core/state/game/game.actions';
+import { Router } from '@angular/router';
 
 const BINS_SWITCH_FREQUENCY = 40;
 const GAME_TIME = 120;
@@ -18,11 +19,12 @@ const GAME_TIME = 120;
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
-  styleUrls: ['./game.component.scss']
+  styleUrls: ['./game.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GameComponent implements OnInit, AfterViewInit {
+export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  @ViewChild('bombZone', { static: true }) private bombZone: ElementRef<HTMLDivElement>;
+  @ViewChild('bombZone', { static: false }) private bombZone: ElementRef<HTMLDivElement>;
 
   game$: Observable<Game>;
   bins$: Observable<Bin[]>;
@@ -30,31 +32,34 @@ export class GameComponent implements OnInit, AfterViewInit {
   nextBinMix$: Observable<number>;
   gameRemainingTime$: Observable<string>;
 
-  activeDraggingBomb: Bomb;
+  activeDraggingBomb: Bomb | undefined;
 
-  private timeLeft = BINS_SWITCH_FREQUENCY;
-  private gameTime = GAME_TIME;
+  private timeLeftForBinsSwitch = BINS_SWITCH_FREQUENCY;
+  private gameRemainingTime = GAME_TIME;
 
   private activeHoveringBin: Bin | undefined;
   private game: Game;
+  private planingBombsInterval: any;
 
   constructor(private store: Store<AppState>,
-              private zone: NgZone) { }
+              private zone: NgZone,
+              private router: Router) { }
 
   ngOnInit(): void {
     this.getBins();
     this.getBombs();
     this.getGameState();
-    this.createBinsTimer();
+    this.createBinsSwitchTimer();
     this.initGameTime();
-    this.spawnBombs();
   }
 
   ngAfterViewInit(): void {
     this.setupBombZoneBoundaries();
+    this.startPlantingBombs();
   }
 
   private setupBombZoneBoundaries(): void {
+    this.store.dispatch({ type: GameActionsTypes.ResetScore });
     this.store.dispatch({
       type: GameActionsTypes.UpdateBombZoneBoundaries,
       payload: {
@@ -65,15 +70,15 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   private getBins(): void {
-    this.bins$ = this.store.select(state => state.bins.bins).pipe(untilDestroyed(this));
+    this.bins$ = this.store.select(state => state.binsState.bins).pipe(untilDestroyed(this));
   }
 
   private getBombs(): void {
-    this.bombs$ = this.store.select(state => state.bombs.bombs).pipe(untilDestroyed(this));
+    this.bombs$ = this.store.select(state => state.bombsState.bombs).pipe(untilDestroyed(this), delay(0));
   }
 
   private getGameState(): void {
-    this.game$ = this.store.select(state => state.game.game).pipe(untilDestroyed(this));
+    this.game$ = this.store.select(state => state.gameState.game).pipe(untilDestroyed(this));
     this.game$
       .pipe(untilDestroyed(this))
       .subscribe((value: Game) => {
@@ -81,17 +86,24 @@ export class GameComponent implements OnInit, AfterViewInit {
       });
   }
 
-  private createBinsTimer(): void {
+  private createBinsSwitchTimer(): void {
     this.nextBinMix$ = timer(0, 1000)
       .pipe(
         untilDestroyed(this),
-        map(() => {
-          if (this.timeLeft > 0) {
-            return --this.timeLeft;
+        filter(() => {
+          if (this.gameRemainingTime > 0) {
+            return true;
           }
-          this.timeLeft = BINS_SWITCH_FREQUENCY;
+          this.timeLeftForBinsSwitch = 0;
+          return false;
+        }),
+        map(() => {
+          if (this.timeLeftForBinsSwitch > 0) {
+            return --this.timeLeftForBinsSwitch;
+          }
+          this.timeLeftForBinsSwitch = BINS_SWITCH_FREQUENCY;
           this.mixBins();
-          return this.timeLeft;
+          return this.timeLeftForBinsSwitch;
         })
       );
   }
@@ -101,11 +113,18 @@ export class GameComponent implements OnInit, AfterViewInit {
     this.gameRemainingTime$ = timer(0, 1000)
       .pipe(
         untilDestroyed(this),
+        filter(() => {
+          if (this.gameRemainingTime > 0) {
+            return true;
+          }
+          this.exitGame();
+          return false;
+        }),
         map(() => {
-          --this.gameTime;
+          --this.gameRemainingTime;
 
-          const minutes = Math.floor(this.gameTime / 60);
-          const seconds = this.gameTime % 60;
+          const minutes = Math.floor(this.gameRemainingTime / 60);
+          const seconds = this.gameRemainingTime % 60;
 
           return twoDigitValue(minutes) + ':' + twoDigitValue(seconds);
         })
@@ -130,6 +149,7 @@ export class GameComponent implements OnInit, AfterViewInit {
       }
       this.clearActiveBin();
     }
+    this.activeDraggingBomb = undefined;
   }
 
   onMouseEnterBin(bin: Bin): void {
@@ -140,44 +160,30 @@ export class GameComponent implements OnInit, AfterViewInit {
     this.activeHoveringBin = undefined;
   }
 
-  private spawnBombs(): void {
+  private startPlantingBombs(): void {
     this.zone.runOutsideAngular(() => {
       let frequency = 5000;
-      let interval;
 
       const increasingInterval = (): void => {
-        clearInterval(interval);
-        this.spawnNewBomb();
+        clearInterval(this.planingBombsInterval);
+        if (this.gameRemainingTime === 0) {
+          return;
+        }
+        this.store.dispatch({ type: BombsActionsTypes.PlantRandomBomb });
         frequency = Math.max(500, frequency * 0.96);
-        interval = setInterval(increasingInterval, frequency);
+        this.planingBombsInterval = setInterval(increasingInterval, frequency);
       };
 
       increasingInterval();
     });
   }
 
-  private spawnNewBomb(): void {
-    const bomb = {
-      id: GameComponent.getRandomInteger(),
-      lifetime: GameComponent.getRandomInteger(5, 10),
-      color: ['red', 'blue', 'green'][GameComponent.getRandomInteger(0, 2)],
-      xPosition: this.getXPosition(),
-      yPosition: this.getYPosition()
-    } as Bomb;
-    this.store.dispatch({ type: BombsActionsTypes.CreateBomb, payload: bomb });
+  private exitGame(): void {
+    this.router.navigate(['']);
   }
 
-  private getXPosition(): number {
-    const bombSize = 80;
-    return GameComponent.getRandomInteger(0, this.game.bombZoneWidth - bombSize);
-  }
-
-  private getYPosition(): number {
-    const bombSize = 80;
-    return GameComponent.getRandomInteger(0, this.game.bombZoneHeight - bombSize);
-  }
-
-  private static getRandomInteger(min: number = 1, max: number = 1000): number {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+  ngOnDestroy(): void {
+    clearInterval(this.planingBombsInterval);
+    this.store.dispatch({ type: BombsActionsTypes.DeleteAllBombs });
   }
 }

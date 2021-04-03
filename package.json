@@ -22,9 +22,10 @@
     "@angular/platform-browser-dynamic": "~11.0.5",
     "@angular/router": "~11.0.5",
     "@ngneat/until-destroy": "^8.0.4",
+    "@ngrx/effects": "^11.1.0",
     "@ngrx/store": "^11.0.1",
     "@ngrx/store-devtools": "^11.0.1",
-    "rxjs": "~6.6.0",
+    "rxjs": "~6.5.5",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2"
   },

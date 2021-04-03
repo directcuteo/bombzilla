@@ -7,15 +7,15 @@ import * as fromGame from './game/game.reducer';
 
 
 export interface AppState {
-  game: fromGame.GameState;
-  bins: fromBins.BinsState;
-  bombs: fromBombs.BombsState;
+  gameState: fromGame.GameState;
+  binsState: fromBins.BinsState;
+  bombsState: fromBombs.BombsState;
 }
 
 export const reducers: ActionReducerMap<AppState> = {
-  game: fromGame.gameReducers,
-  bins: fromBins.binsReducers,
-  bombs: fromBombs.bombsReducers
+  gameState: fromGame.gameReducers,
+  binsState: fromBins.binsReducers,
+  bombsState: fromBombs.bombsReducers
 };
 
 export const metaReducers: MetaReducer<AppState>[] = !environment.production ? [] : [];
