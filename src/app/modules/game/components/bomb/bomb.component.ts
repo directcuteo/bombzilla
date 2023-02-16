@@ -34,7 +34,7 @@ export class BombComponent implements OnInit {
       .pipe(
         untilDestroyed(this),
         map(() => {
-          const remaining = --this.bombLifetime;
+          const remaining = this.bombLifetime - 1;
           if (remaining === 0) {
             this.detonateBomb();
           }

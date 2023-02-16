@@ -62,24 +62,24 @@
   }
 }
 
-$d: 4px;
+$d: 40px;
 
 .particle {
   position: absolute;
   width: $d;
   height: $d;
+  border-radius: 50%;
   animation: shoot 3s ease-out infinite;
   animation-name: shoot, fade;
 
   @for $i from 0 to 400 {
-    $t: (1 + .01*random(100))*1s;
+    $time: (1 + 0.1*random(100))*1s;
 
     &:nth-child(#{$i + 1}) {
-      transform: translate(random(100)*1vw,
-              random(100)*1vh);
+      transform: translate(random(100)*1vw, random(100)*1vh);
       background: hsl(random(360), 100%, 65%);
-      animation-duration: $t;
-      animation-delay: -.01*random(100)*$t;
+      animation-duration: $time;
+      animation-delay: -.01*random(100)*$time;
     }
   }
 }
